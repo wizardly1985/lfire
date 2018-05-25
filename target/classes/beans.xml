@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="  
+http://www.springframework.org/schema/beans   
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+http://www.springframework.org/schema/context   
+http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+http://www.springframework.org/schema/tx   
+http://www.springframework.org/schema/tx/spring-tx-3.0.xsd   
+http://www.springframework.org/schema/aop   
+http://www.springframework.org/schema/aop/spring-aop-3.0.xsd  
+">
+	<!-- 使用 annotation -->
+	<context:annotation-config />
+	<!-- 自动扫描dao和service包(自动注入) -->
+	<context:component-scan base-package="com.lfire.host" />
+	<!-- -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="url" value="jdbc:mysql://localhost:3306/host">
+		</property>
+		<property name="username" value="root"></property>
+		<property name="password" value="1111"></property>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+
+		<property name="packagesToScan" value="com.lfire.host.entity"></property>
+	</bean>
+	<!-- 注入安全管理器 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="bosRealm" />
+	</bean>
+	<!-- 自定义的Realm -->
+	<bean id="bosRealm" class="com.lfire.host.service.impl.BosRealm">
+	</bean>
+	<!-- 配置Shiro核心Filter -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- 安全管理器 -->
+		<property name="securityManager" ref="securityManager" />
+		<!-- 未认证，跳转到哪个页面 -->
+		<property name="loginUrl" value="/login.html" />
+		<!-- 登录成功跳转页面 -->
+		<property name="successUrl" value="/index.html" />
+		<!-- 认证后，没有权限跳转页面 -->
+		<property name="unauthorizedUrl" value="/unauthorized.html" />
+
+		<!-- shiro URL控制过滤器规则 anon未认证可以访问 authc认证后可以访问 perms需要特定权限才能访问 roles需要特定角色才能访问 
+			user需要特定用户才能访问 port需要特定端口才能访问（不常用） rest根据指定HTTP请求才能访问（不常用） *文件夹中的全部文件 ** 
+			文件夹中的全部文件(含子文件夹) -->
+		<property name="filterChainDefinitions">
+			<value>
+				/login.html* = anon
+				/css/** = anon
+				/js/** = anon
+				/upload/** = anon
+				/images/** = anon
+				/validatecode.jsp* = anon
+				/services/** = anon
+				/user_login.action* = anon
+				/pages/base/courier.html* = perms[courier:list]
+				/** = anon
+			</value>
+		</property>
+	</bean>
+	<!-- Activiti -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- spring负责创建流程引擎的配置文件 -->
+	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+		<!-- 数据源 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 配置事务管理器，统一事务 -->
+		<property name="transactionManager" ref="transactionManager" />
+		<!-- 设置建表策略，如果没有表，自动创建表 -->
+		<property name="databaseSchemaUpdate" value="true" />
+	</bean>
+	<!-- 创建流程引擎对象 -->
+	<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+		<property name="processEngineConfiguration" ref="processEngineConfiguration" />
+	</bean>
+
+	<!-- activiti的各种服务接口 -->
+	<!-- 由流程引擎对象，提供的方法，创建项目中使用的Activiti工作流的Service -->
+	<bean id="repositoryService" factory-bean="processEngine"
+		factory-method="getRepositoryService" />
+	<bean id="runtimeService" factory-bean="processEngine"
+		factory-method="getRuntimeService" />
+	<bean id="taskService" factory-bean="processEngine"
+		factory-method="getTaskService" />
+	<bean id="historyService" factory-bean="processEngine"
+		factory-method="getHistoryService" />
+	<bean id="formService" factory-bean="processEngine"
+		factory-method="getFormService" />
+    <!-- 验证码 -->
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+		<property name="config">
+			<bean class="com.google.code.kaptcha.util.Config">
+				<constructor-arg>
+					<props>
+						<prop key="kaptcha.border">yes</prop>
+						<prop key="kaptcha.border.color">105,179,90</prop>
+						<prop key="kaptcha.textproducer.font.color">blue</prop>
+						<prop key="kaptcha.image.width">80</prop>
+						<prop key="kaptcha.image.height">30</prop>
+						<prop key="kaptcha.textproducer.font.size">27</prop>
+						<prop key="kaptcha.session.key">code</prop>
+						<prop key="kaptcha.textproducer.char.length">4</prop>
+						<prop key="kaptcha.textproducer.font.names">宋体,楷体,微软雅黑</prop>
+						<prop key="kaptcha.textproducer.char.string">123456789ABCE</prop>
+						<prop key="kaptcha.obscurificator.impl">com.google.code.kaptcha.impl.WaterRipple</prop>
+						<prop key="kaptcha.noise.color">white</prop>
+						<prop key="kaptcha.noise.impl">com.google.code.kaptcha.impl.NoNoise</prop>
+						<prop key="kaptcha.background.clear.from">white</prop>
+						<prop key="kaptcha.background.clear.to">white</prop>
+					</props>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+</beans>  
