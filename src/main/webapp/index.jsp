@@ -49,11 +49,11 @@
 	<h3>技术方案</h3>
 	<p>
 	<h4>后台技术:</h4>
-	</br> 工作流引擎：------
+	</br> 工作流引擎：Activiti 5.21.0
 	</br> ORM框架：Hibernate 4.1.3.Final
 	</br> Web框架：Struts 2.3.16.3
 	</br> 核心框架：Spring 3.1.2.RELEASE
-	</br> 任务调度：--------
+	</br> 任务调度：Spring Task
 	</br> 权限安全：Apache Shiro
 	</br> 全文搜索引擎：---------
 	</br> 页面静态化处理：--------
@@ -102,13 +102,6 @@
 	</br> 程序质量检查插件：Jdepend4eclipse(Eclipse平台)
 	</br>
 	</p>
-	<h1>
-		<a href="demo!demoAll.action">跳转到demo</a>
-	</h1>
-
-	---
-	<div>
-		<ul id="treeDemo" class="ztree"></ul>
-	</div>
+	
 </body>
 </html>

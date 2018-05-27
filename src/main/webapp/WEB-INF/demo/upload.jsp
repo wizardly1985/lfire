@@ -6,13 +6,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <script
-	src="http://upcdn.b0.upaiyun.com/libs/jquery/jquery-2.0.2.min.js">
-	
-</script>
+	src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
 <script type="text/javascript">
-	$(document).ready(
-			function() {
-
+	alert("----文件上传");
+	$(document).ready(function() {
+				alert("文件上传");
 				$("#file_upload").change(
 						function() {
 							alert("文件上传");
