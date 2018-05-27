@@ -86,10 +86,38 @@
         <td></td>
     </tr>
     <tr>
-        <td>00，00，00，08</td>
+        <td>00，00，00，09</td>
         <td>验证码</td>
         <td><a href = "demo!gotoCode.action">code.jsp</a></td>
         <td>实现验证码Kaptcha</td>
+        <td>已完成！！</td>
+    </tr>
+    <tr>
+        <td>00，00，00，10</td>
+        <td>定时任务</td>
+        <td><a href = "#"></a></td>
+        <td>实现Spring</td>
+        <td>基本搞清楚</td>
+    </tr>
+    <tr>
+        <td>00，00，00，11</td>
+        <td>聊天</td>
+        <td><a href = "#"></a></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>00，00，00，12</td>
+        <td>流媒体</td>
+        <td><a href = "#"></a></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>00，00，00，12</td>
+        <td>支付</td>
+        <td><a href = "#"></a></td>
+        <td></td>
         <td></td>
     </tr>
 </table>
