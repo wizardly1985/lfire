@@ -10,10 +10,10 @@
 <script type="text/javascript">
 	alert("----文件上传");
 	$(document).ready(function() {
-				alert("文件上传");
+				
 				$("#file_upload").change(
 						function() {
-							alert("文件上传");
+							
 							var files = $("#file_upload").prop("files");
 							var d = new FormData();
 							d.append("file", files[0]);
